@@ -18,14 +18,14 @@
 #'\dontrun{
 #' result<-getbound(SS=39,target=0.2,P_target=0.9,maxtox=NULL,tox_ass=seq(0.10,0.5,0.05),
 #'     sim=1,nsim=100,prt1=6,out=NULL)
-#' plotbound(data_in=result,out="C:/Users/kdhollander/Downloads/")
+#' ContMon_plotbound(data_in=result,out="C:/Users/kdhollander/Downloads/")
 #' }
 #'
 #' @export
 #' @importFrom grDevices dev.off png
 #' @importFrom graphics grid legend lines par plot
 
-plotbound<-function(data_in,out){
+ContMon_plotbound<-function(data_in,out){
 
   data    <- data_in[[1]]
   tox_ass <- data_in[[2]]

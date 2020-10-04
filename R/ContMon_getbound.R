@@ -28,8 +28,8 @@
 #' @param out path for storing csv output files
 #' @examples
 #'\dontrun{
-#' getbound(SS=19,target=0.2,P_target=NULL,maxtox=0.33,tox_ass=seq(0.10,0.5,0.05),sim=1,nsim=100,
-#'     prt1=6,out=NULL)
+#' ContMon_getbound(SS=19,target=0.2,P_target=NULL,maxtox=0.33,tox_ass=seq(0.10,0.5,0.05),
+#'     sim=1,nsim=100,prt1=6,out=NULL)
 #' }
 #'
 #' @export
@@ -42,7 +42,7 @@
 
 # SS=19;target=0.2;P_target=NULL;maxtox=0.33;tox_ass=seq(0.10,0.5,0.05);sim=1;nsim=100; prt1=6;out=NULL
 
-getbound<-function(SS,target,P_target=NULL,maxtox=NULL,prt1=0,tox_ass=seq(0.10,0.5,0.05),sim=0,nsim,out){
+ContMon_getbound<-function(SS,target,P_target=NULL,maxtox=NULL,prt1=0,tox_ass=seq(0.10,0.5,0.05),sim=0,nsim,out){
 
   n_ass <-length(tox_ass)
 
