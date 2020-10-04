@@ -1,2 +1,2 @@
-# PhIIContMon
-Continuous safety monitorin in PhII clinical trial
+# PhII_Bayes
+Bayesian tools for PhII clinical trial design
