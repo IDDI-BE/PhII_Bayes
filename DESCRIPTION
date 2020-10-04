@@ -1,0 +1,14 @@
+Package: PhIIContMon
+Type: Package
+Title: Continuous monitoring of clinical trials
+Version: 0.1.0
+Author: Koenraad D'Hollander
+Maintainer: <koenraad.dhollander@iddi.com>
+Description: Calculate boundaries for Continuous monitoring of clinical trials 
+    Using Bayesian posterior probability arguments + simulation frequenstist operating characteristics.
+License: GPL (>=2)
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    RColorBrewer
+RoxygenNote: 7.1.0
