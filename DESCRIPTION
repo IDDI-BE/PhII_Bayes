@@ -12,4 +12,6 @@ LazyData: true
 Suggests:
     RColorBrewer
 RoxygenNote: 7.1.1
-Imports: VGAM
+Imports: 
+    VGAM,
+    data.table
