@@ -112,10 +112,10 @@ getPPdesign<-function(N,Delta_T,interim_type,interim,cohortsize=NULL,interimstar
   #                                                    2) overall stop futility, 
   #                                                    3) stop futility by interim
   
-  Boundaries<-cbind(paste0("D_L=",Delta_L,"/D_U=",Delta_U)) # This is not correct: D_L and D_U: vector corresponds with one sample size; D_T multiple possibilities possible
+  Boundaries<-cbind(paste0("D_L=",Delta_L,"/D_U=",Delta_U)) 
   
-  param<-data.frame(data.table::CJ(N,Delta_T,Boundaries)) # This is not correct: D_L and D_U: vector corresponds with one sample size; D_T multiple possibilities possible
-  param<-cbind(param,pow=0,eff_fin=0,eff_stop=0,fut_stop=0,index=1:dim(param)[1]) # This is not correct: D_L and D_U: vector corresponds with one sample size; D_T multiple possibilities possible
+  param<-data.frame(data.table::CJ(N,Delta_T,Boundaries)) 
+  param<-cbind(param,pow=0,eff_fin=0,eff_stop=0,fut_stop=0,index=1:dim(param)[1]) 
 
   # Create index number
   index<-0
