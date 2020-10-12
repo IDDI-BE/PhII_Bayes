@@ -8,10 +8,6 @@ The package is available under the GPL-2 License or any later version: https://w
 - For installing the development version of this package: `remotes::install_github("IDDI-BE/PhII_Bayes")`
 - Look to the documentation of the functions `help(package = "PhII_Bayes")`
 
-
-## Usage
-
-
 ## Support
 
 Need support in clinical trials?
