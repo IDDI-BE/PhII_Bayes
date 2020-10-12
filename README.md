@@ -14,4 +14,3 @@ Need support in clinical trials?
 Contact IDDI: https://www.iddi.com
 
 ![](https://avatars3.githubusercontent.com/u/66465772?s=200&v=4)
-
