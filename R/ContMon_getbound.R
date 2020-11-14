@@ -107,7 +107,7 @@ ContMon_getbound<-function(SS,target,Beta_dis,P_target=NULL,maxtox=NULL,prt1=0,t
         result[i,"P_Bayes"] <- round(P_Bayes,2)
 
         c                   <- c+1
-        P_Bayes<-1-pbeta(target,shape1=c+1,shape2=i-c+1)  # P(toxicity>target|c,n), with Beta(1,1) prior
+        P_Bayes<-1-pbeta(target,shape1=c+Beta_dis[1],shape2=i-c+Beta_dis[2])  # P(toxicity>target|c,n), with Beta(1,1) prior
 
       }
     }
@@ -126,7 +126,7 @@ ContMon_getbound<-function(SS,target,Beta_dis,P_target=NULL,maxtox=NULL,prt1=0,t
 
   for (i in (prt1+1):SS){
     for (j in 1:length(tox_ass)){
-      Bayes_result[i,j]=round(pbeta(tox_ass[j],shape1=(c[i]+1)+1,shape2=i-(c[i]+1)+1),2)
+      Bayes_result[i,j]=round(pbeta(tox_ass[j],shape1=(c[i]+1)+Beta_dis[1],shape2=i-(c[i]+1)+Beta_dis[2]),2)
     }
   }
 
