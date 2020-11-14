@@ -18,6 +18,7 @@
 #'
 #' @param SS total sample size, e.g. calculated for primary efficacy endpoint
 #' @param target target toxicity rate
+#' @param Beta_dis two parameters Beta(alpha,beta) of the prior Beta distribution
 #' @param P_target P(toxicity rate>target|data)>=P_target as decision threshold
 #' @param maxtox maximum allowable observed toxicity rate, where boundary not crossed
 #' @param prt1 value for number of patients in starting cohort where alternative safety rule is followed, e.g. 3+3
@@ -28,8 +29,8 @@
 #' @param out path for storing csv output files
 #' @examples
 #'\dontrun{
-#' ContMon_getbound(SS=19,target=0.2,P_target=NULL,maxtox=0.33,tox_ass=seq(0.10,0.5,0.05),
-#'     sim=1,nsim=100,prt1=6,out=NULL)
+#' ContMon_getbound(SS=19,target=0.2,Beta_dis=c(1,1),P_target=NULL,maxtox=0.33,
+#'     tox_ass=seq(0.10,0.5,0.05),sim=1,nsim=100,prt1=6,out=NULL)
 #' }
 #'
 #' @export
@@ -42,7 +43,7 @@
 
 # SS=19;target=0.2;P_target=NULL;maxtox=0.33;tox_ass=seq(0.10,0.5,0.05);sim=1;nsim=100; prt1=6;out=NULL
 
-ContMon_getbound<-function(SS,target,P_target=NULL,maxtox=NULL,prt1=0,tox_ass=seq(0.10,0.5,0.05),sim=0,nsim,out){
+ContMon_getbound<-function(SS,target,Beta_dis,P_target=NULL,maxtox=NULL,prt1=0,tox_ass=seq(0.10,0.5,0.05),sim=0,nsim,out){
 
   n_ass <-length(tox_ass)
 
@@ -81,7 +82,7 @@ ContMon_getbound<-function(SS,target,P_target=NULL,maxtox=NULL,prt1=0,tox_ass=se
           result[i,"P_Bayes"] <- round(P_Bayes,3)
 
           c                   <- c+1
-          P_Bayes<-1-pbeta(target,shape1=c+1,shape2=i-c+1)  # P(toxicity>target|c,n), with Beta(1,1) prior
+          P_Bayes<-1-pbeta(target,shape1=c+Beta_dis[1],shape2=i-c+Beta_dis[2])  # P(toxicity>target|c,n), with Beta(1,1) prior
 
         }
       }

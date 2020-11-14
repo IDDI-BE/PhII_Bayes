@@ -153,7 +153,7 @@ getPPdesign<-function(N,Delta_T,interim_type,interim,cohortsize=NULL,interimstar
             
             if (sim[d,]$fut==0 & sim[d,]$eff==0){
               data_int<-data[1:interim.f[e]]
-              PP<-Pred_Prob.f(N=N_loop,n1=length(data_int),x1=sum(data_int),beta_par<-Beta_dis,p=p0,Delta_T_=D_T)
+              PP<-Pred_Prob.f(N=N_loop,n1=length(data_int),x1=sum(data_int),beta_par=Beta_dis,p=p0,Delta_T_=D_T)
               
               if (PP<=D_L[e]){ # first check interim futility 
                 sim[d,]$fut_int <- e   # futility indicator for specific interim analysis

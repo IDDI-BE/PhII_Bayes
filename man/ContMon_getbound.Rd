@@ -7,6 +7,7 @@
 ContMon_getbound(
   SS,
   target,
+  Beta_dis,
   P_target = NULL,
   maxtox = NULL,
   prt1 = 0,
@@ -20,6 +21,8 @@ ContMon_getbound(
 \item{SS}{total sample size, e.g. calculated for primary efficacy endpoint}
 
 \item{target}{target toxicity rate}
+
+\item{Beta_dis}{two parameters Beta(alpha,beta) of the prior Beta distribution}
 
 \item{P_target}{P(toxicity rate>target|data)>=P_target as decision threshold}
 
@@ -60,8 +63,8 @@ Cum Prob(...) gives the cumulative probability of at least 1x/2x/3x and 4x cross
 }
 \examples{
 \dontrun{
-ContMon_getbound(SS=19,target=0.2,P_target=NULL,maxtox=0.33,tox_ass=seq(0.10,0.5,0.05),
-    sim=1,nsim=100,prt1=6,out=NULL)
+ContMon_getbound(SS=19,target=0.2,Beta_dis=c(1,1),P_target=NULL,maxtox=0.33,
+    tox_ass=seq(0.10,0.5,0.05),sim=1,nsim=100,prt1=6,out=NULL)
 }
 
 }
