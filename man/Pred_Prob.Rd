@@ -29,8 +29,8 @@ Posterior predictive probability of a successful trial, given number of successe
 }
 \examples{
 \dontrun{
-Pred_Prob(N=68,n1=38,x1=27,beta.par=c(1  ,1)  ,p=0.664,Delta_T=0.95)
-Pred_Prob(N=40,n1=23,x1=16,beta.par=c(0.6,0.4),p=0.6  ,Delta_T=0.9 )
+Pred_Prob(N=68,n1=38,x1=27,beta_par=c(1  ,1)  ,p=0.664,Delta_T=0.95)
+Pred_Prob(N=40,n1=23,x1=16,beta_par=c(0.6,0.4),p=0.6  ,Delta_T=0.9 )
 }
 
 }
