@@ -79,7 +79,7 @@ ContMon_getbound<-function(SS,target,Beta_dis,P_target=NULL,maxtox=NULL,prt1=0,t
         while (P_Bayes<P_target){
 
           result[i,"c"]       <- c
-          result[i,"P_Bayes"] <- round(P_Bayes,3)
+          result[i,"P_Bayes"] <- round(P_Bayes,4)
 
           c                   <- c+1
           P_Bayes<-1-pbeta(target,shape1=c+Beta_dis[1],shape2=i-c+Beta_dis[2])  # P(toxicity>target|c,n), with Beta(1,1) prior
@@ -104,7 +104,7 @@ ContMon_getbound<-function(SS,target,Beta_dis,P_target=NULL,maxtox=NULL,prt1=0,t
       while (P_Bayes<P_target){
 
         result[i,"c"]       <- c
-        result[i,"P_Bayes"] <- round(P_Bayes,3)
+        result[i,"P_Bayes"] <- round(P_Bayes,4)
 
         c                   <- c+1
         P_Bayes<-1-pbeta(target,shape1=c+Beta_dis[1],shape2=i-c+Beta_dis[2])  # P(toxicity>target|c,n), with Beta(1,1) prior
