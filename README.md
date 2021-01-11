@@ -6,7 +6,7 @@ Bayesian tools for PhII clinical trial design
 The package is available under the GPL-2 License or any later version: https://www.gnu.org/licenses/gpl-2.0.html
 
 - For installing the development version of this package: `remotes::install_github("IDDI-BE/PhII_Bayes")`
-- Look to the documentation of the functions `help(package = "PhII_Bayes")`
+- Look to the documentation of the functions `help(package = "PhIIBayes")`
 
 ## Support
 
