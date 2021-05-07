@@ -1,6 +1,4 @@
 
-# to do: describe output; create package
-
 #' @title Bayesian efficacy monitoring
 #' @description
 #' Single arm Bayesian Efficacy Monitoring Via Predictive Probability (BEMPR) or Bayesian Efficacy Monitoring Via Posterior Probability (BEMPO) \cr
@@ -43,54 +41,42 @@
 #' @return a list of 3 data.frames: first with design parameters + operating characteristics ($param_simul) , \cr
 #' one with futility decision rules ($Fut_rules), and one with efficacy decision rules ($Eff_rules)
 #' \itemize{
-#' \item N: Different sample sizes for which frequentist properties simulated
-#' \item Delta_T: Different thresholds for which frequentist properties simulated
-#' \item Boundaries: Different boundaries (combination of Delta_L and Delta_U) for which frequentist properties are simulated
-#' \item N_interim: number of interim analyses (final analysis not included)
-#' \item pow: proportion of simulations where \eqn{H0} was rejected
-#' \item eff_fin: proportion of simulations where \eqn{H0} was rejected only at the final analysis
-#' \item eff_stop: proportion of simulations where \eqn{H0} was rejected at an interim analysis
-#' \item fut_stop: proportion of simulations where trial stopped for futility at an interim analysis
-#' \item int_nrx: number of patients at x'th interim analysis
-#' \item effx: proportion of simulations where trial stopped for efficacy at xth interim analysis
-#' \item futx: proportion of simulations where trial stopped for futility at xth interim analysis
-#' \item decision rules: for efficacy: if >=x: stop for efficacy; for futility: if <=x: stop for futility
+#' \item param_simul: dataframe with all input parameters + operating characteristics
+#' \item param_simul$scenario: combination of vector N and p
+#' \item param_simul$N: sample size for which frequentist properties simulated
+#' \item param_simul$p: binomial parameter (true proportion) for which frequentist properties simulated
+#' \item param_simul$param: string with all input parameters
+#' \item param_simul$N_interim: number of interim analyses (final analysis not included)
+#' \item param_simul$interim: string with number of patients per interim analysis
+#' \item param_simul$pow: proportion of simulations where \eqn{H0} was rejected
+#' \item param_simul$eff_fin: proportion of simulations where \eqn{H0} was rejected only at the final analysis
+#' \item param_simul$eff_stop: proportion of simulations where \eqn{H0} was rejected at an interim analysis
+#' \item param_simul$fut: proportion of simulations where \eqn{H0} was not rejected
+#' \item param_simul$eff_fin: proportion of simulations where decision of not rejecting \eqn{H0} was at the final analysis
+#' \item param_simul$fut_stop: proportion of simulations where trial stopped for futility at an interim analysis
+#' \item param_simul$N_avg: average number of patients for simulated datasets
+#' \item param_simul$int_nrx: number of patients at x'th interim analysis
+#' \item param_simul$effx: proportion of simulations where trial stopped for efficacy at xth interim analysis
+#' \item param_simul$futx: proportion of simulations where trial stopped for futility at xth interim analysis
+#' \item param_simul$decision rules: for efficacy: if >=x: stop for efficacy; for futility: if <=x: stop for futility
+#' \item Fut_rules: dataframe with futility rules for each interim
+#' \item Fut_rules$n: number of patients at interim
+#' \item Fut_rules$x: number of successes at interim (Futility if observed successes <=x)
+#' \item Fut_rules$P_Bayes/Fut_rules$PP: actual posterior probability or PP at cutoff
+#' \item Eff_rules: dataframe with efficacy rules for each interim
+#' \item Eff_rules$n: number of patients at interim
+#' \item Eff_rules$x: number of successes at interim (Efficacy if observed successes >=x)
+#' \item Eff_rules$P_Bayes/Fut_rules$PP: actual posterior probability or PP at cutoff
 #' }
 #'@references Lee JJ, Liu DD.A predictive probability design for phase II cancer clinical trialsClinical Trials 2008; 5: 93–106
 #'@importFrom VGAM dbetabinom.ab
 #'@export
 #'
-#' @examples
-#' \donttest{
-#' ## Example 1
-#' result<-getPPdesign(N=seq(80,100,5),Delta_T=c(0.95),Delta_L=list(c(0.2,0.2)),
-#' Delta_U=list(c(0.8,0.8)),interim_type="perc",interim=c(0.5,0.7),
-#' p0=0.4,pa=0.6,Beta_dis=c(0.4,0.6),Freqprop="pow",nsim=100)
-#'
-#' ## Example 2
-#' result<-getPPdesign(N=seq(80,100,5),Delta_T=c(0.95),Delta_L=0.3,Delta_U=1,
-#' interim_type="cont",cohortsize=3,
-#' p0=0.4,pa=0.6,Beta_dis=c(0.4,0.6),Freqprop="pow",nsim=100)
-#'
-#' ## Example 3
-#' result<-getPPdesign(N=c(68),Delta_T=c(0.95),interim_type="fix",
-#' interim=c(30,40),Delta_L=list(c(0.1,0.05),c(0.1,0.1)),Delta_U=list(c(1,1),c(1,1)),
-#' p0=0.66,pa=0.8,Beta_dis=c(0.66,0.33),Freqprop="pow",nsim=10)
-#'
-#' ## Example 4
-#' result<-getPPdesign(N=c(68),Delta_T=c(0.95),interim_type="fix",
-#' interim=c(30,40),Delta_L=list(c(0.1,0.05),c(0.1,0.1)),Delta_U=list(c(1,1),c(1,1)),
-#' p0=0.66,pa=0.8,Beta_dis=c(0.66,0.33),Freqprop="typeI",nsim=10)
-#'
-#' ## Example 5
-#' result<-getPPdesign(N=c(68),Delta_T=c(0.95),interim_type="fix",
-#' interim=c(30),Delta_L=list(c(0.1)),Delta_U=list(c(1,1)),
-#' p0=0.66,pa=0.8,Beta_dis=c(0.66,0.33),Freqprop="pow",nsim=10)
-#'
-#' result<-getPPdesign(N=c(68),Delta_T=c(0.95),interim_type="fix",
-#' interim=c(30),Delta_L=list(c(0.1)),Delta_U=list(c(1,1)),
-#' p0=0.66,pa=0.8,Beta_dis=c(0.66,0.33),Freqprop="typeI",nsim=10)
-#' }
+#' @examples #Check versus https://biostatistics.mdanderson.org/shinyapps/BEMPO/
+#' test1<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,P_fut=0.7,Delta_eff=0.3,P_eff=0.9,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
+#' test2<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,P_fut=1  ,Delta_eff=0.3,P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
+#' test3<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),              P_fut=0.3,              P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=10)
+#' test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),              P_fut=0  ,              P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
 
 #---------------------------------------------#
 # Function to calculate posterior probability #
@@ -433,9 +419,3 @@ BEMPP<-function(N,p,design,interim_type,interim,cohortsize=NULL,interimstart=NUL
 
   return(list(param_simul=param[,c(firstcols,lastcols)], Fut_rules=Futility, Eff_rules=Efficacy))
 } # end function
-
-# Check versus https://biostatistics.mdanderson.org/shinyapps/BEMPO/
-test1<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,P_fut=0.7,Delta_eff=0.3,P_eff=0.9,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=1000)
-test2<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,P_fut=1  ,Delta_eff=0.3,P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=1000)
-test3<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),              P_fut=0.3,              P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=1000)
-test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),              P_fut=0  ,              P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=1000)
