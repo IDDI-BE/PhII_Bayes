@@ -1,4 +1,143 @@
 
+#---------------------------------------------#
+# Function to calculate posterior probability #
+#---------------------------------------------#
+
+# Definition: P(Delta>Dcut|n,x) ~beta(beta_par[1]+x,beta_par[2]+n-x) with prior beta distribution beta_par
+
+Post_Prob.f<-function(n,x,beta_par,Dcut){
+  1-pbeta(Dcut,x+beta_par[1],n-x+beta_par[2])
+}
+
+Post_Prob.f(n=40,x=16+0,beta_par=c(0.6,0.4),Dcut=0.6) # Example Lee 2008, p97, Table 1 (first line of Panel B: Y=0)
+
+
+#----------------------------------------------#
+# Function to calculate predictive probability #
+#----------------------------------------------#
+
+# Definition: Sum(P(X2=i|x1)I[P(Delta>Dcut|x1,X2=i)>PostProb]) for all X2=i,...,n2,
+# with P(Delta>Dcut|x1,X2=i) ~beta(beta_par[1]+x1+i,beta_par[2]+N-x1-i) with prior distribution beta_par
+# with X2~beta-binomial(n2,beta_par[1]+x1,beta_par[2]+n1-x1)
+
+Pred_Prob.f<-function(N,n1,x1,beta_par,Dcut,PostProb){
+  n2<-N-n1
+  i<-seq(0,n2)
+  PP_i<- (VGAM::dbetabinom.ab(x=i,size=n2,shape1=beta_par[1]+x1,shape2=beta_par[2]+n1-x1))*
+    as.numeric((1-pbeta(Dcut,beta_par[1]+x1+i,beta_par[2]+N-x1-i))>PostProb);
+  PP<-sum(PP_i)
+  return(PP)
+}
+
+# Pred_Prob.f(N=40,n1=23,x1=16,beta_par=c(0.6,0.4),Dcut=0.6,PostProb=0.9) # Example Lee 2008, p97, Table 1 (PP in text)
+
+
+#--------------------------------------------------------------------------------------------#
+# Functions to calculate decision rules for posterior probability, for efficacy and futility #
+#--------------------------------------------------------------------------------------------#
+
+# BEMPO interim efficacy stopping rule is P(Delta>Dcut)>=PostProb
+# PostProb=1 means never stopping for efficacy
+# PostProb=0 means always stopping for efficacy
+#-------------------------------------------------------------------
+
+POST_dec_eff<-function(n_,PostProb,Dcut,beta_par){ # For efficacy
+  x<-P_Bayes<-0
+  
+  while(P_Bayes<PostProb & x<=n_){
+    P_Bayes<-1-pbeta(Dcut,shape1=x+beta_par[1],shape2=n_-x+beta_par[2])
+    x<-x+1
+  }
+  
+  if (PostProb==0 | PostProb==1){return(list(P_Bayes=NA,x=NA))}
+  else {return(list(P_Bayes=P_Bayes,x=x-1))}
+}
+
+# Check: POST_dec_eff(n_=5,PostProb=0.9,Dcut=0.3,beta_par=c(0.5,0.5))  # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
+# Check: POST_dec_eff(n_=10,PostProb=0.9,Dcut=0.3,beta_par=c(0.5,0.5))
+# Check: POST_dec_eff(n_=15,PostProb=0.8,Dcut=0.3,beta_par=c(0.5,0.5))
+# Check: POST_dec_eff(n_=5,PostProb=1,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
+# Check: POST_dec_eff(n_=5,PostProb=0,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
+
+# BEMPO interim futility stopping rule is P(Delta<=D_cut)>PostProb
+# PostProb=1 means never stopping for futility
+# PostProb=0 means always stopping for futility
+#---------------------------------------------------------------------
+
+POST_dec_fut<-function(n_,PostProb,Dcut,beta_par){ # For futility
+  x<-n_
+  P_Bayes<-0
+  
+  while(P_Bayes<=PostProb & x>=0){
+    P_Bayes<- pbeta(Dcut,shape1=x+beta_par[1],shape2=n_-x+beta_par[2])
+    x<-x-1
+  }
+  
+  if (PostProb==0 | PostProb==1){return(list(P_Bayes=NA,x=NA))}
+  else {return(list(P_Bayes=P_Bayes,x=x+1))}
+}
+
+# Check: POST_dec_fut(n_=5,PostProb=0.7,Dcut=0.3,beta_par=c(0.5,0.5)) # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
+# Check: POST_dec_fut(n_=10,PostProb=0.7,Dcut=0.3,beta_par=c(0.5,0.5))
+# Check: POST_dec_fut(n_=5,PostProb=0,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
+# Check: POST_dec_fut(n_=5,PostProb=1,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
+
+
+#-------------------------------------------------------------------------------------------------------#
+# Functions to calculate decision rules for posterior predictive probability, for efficacy and futility #
+#-------------------------------------------------------------------------------------------------------#
+
+# BEMPR interim efficacy stopping rule is PP>=PredProb
+#
+# PredProb=1 means never stopping for efficacy
+# PredProb=0 means always stopping for efficacy
+#-------------------------------------------
+
+PP_dec_eff<-function(PredProb,...){ # For efficacy
+  args<-list(...)
+  x<-PP<-0
+  
+  while(PP<PredProb & x<=args$n1){
+    PP<-Pred_Prob.f(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
+    x<-x+1
+  }
+  
+  if (PredProb==0 | PredProb==1){return(list(PP=NA,x=NA))}
+  else {return(list(PP=PP,x=x-1))}
+}
+
+# Check: PP_dec_eff(PredProb=0.9,N=15,n1=5,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
+# Check: PP_dec_eff(PredProb=0.9,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7)
+# Check: POST_dec_eff(n_=15,PostProb=0.7,Dcut=0.3,beta_par=c(0.5,0.5))
+# Check: PP_dec_eff(PredProb=0,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
+# Check: PP_dec_eff(PredProb=1,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
+
+# BEMPR interim futility stopping rule is PP<PredProb
+#
+# PredProb=0 means never stopping for futility
+# PredProb=1 means always stopping for futility
+#---------------------------------------------------
+
+PP_dec_fut<-function(PredProb,...){ # For futility
+  args<-list(...)
+  x<-args$n1
+  PP<-1
+  
+  while(PP>=PredProb & x>=0){
+    PP<-Pred_Prob.f(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
+    x<-x-1
+  }
+  if (PredProb==0 | PredProb==1){return(list(PP=NA,x=NA))}
+  else {return(list(PP=PP,x=x+1))}
+  
+}
+
+
+# Check: PP_dec_fut(PredProb=0.3,N=15,n1=5 ,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
+# Check: PP_dec_fut(PredProb=0.3,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7)
+# Check: PP_dec_fut(PredProb=0  ,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
+# Check: PP_dec_fut(PredProb=1  ,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
+
 #' @title Bayesian efficacy monitoring
 #' @description
 #' Single arm Bayesian Efficacy Monitoring Via Predictive Probability (BEMPR) or Bayesian Efficacy Monitoring Via Posterior Probability (BEMPO) \cr
@@ -73,149 +212,14 @@
 #'@export
 #'
 #' @examples #Check versus https://biostatistics.mdanderson.org/shinyapps/BEMPO/
-#' test1<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,P_fut=0.7,Delta_eff=0.3,P_eff=0.9,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-#' test2<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,P_fut=1  ,Delta_eff=0.3,P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-#' test3<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),              P_fut=0.3,              P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=10)
-#' test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),              P_fut=0  ,              P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-
-#---------------------------------------------#
-# Function to calculate posterior probability #
-#---------------------------------------------#
-
-# Definition: P(Delta>Dcut|n,x) ~beta(beta_par[1]+x,beta_par[2]+n-x) with prior beta distribution beta_par
-
-Post_Prob.f<-function(n,x,beta_par,Dcut){
-  1-pbeta(Dcut,x+beta_par[1],n-x+beta_par[2])
-}
-
-Post_Prob.f(n=40,x=16+0,beta_par=c(0.6,0.4),Dcut=0.6) # Example Lee 2008, p97, Table 1 (first line of Panel B: Y=0)
-
-
-#----------------------------------------------#
-# Function to calculate predictive probability #
-#----------------------------------------------#
-
-# Definition: Sum(P(X2=i|x1)I[P(Delta>Dcut|x1,X2=i)>PostProb]) for all X2=i,...,n2,
-# with P(Delta>Dcut|x1,X2=i) ~beta(beta_par[1]+x1+i,beta_par[2]+N-x1-i) with prior distribution beta_par
-# with X2~beta-binomial(n2,beta_par[1]+x1,beta_par[2]+n1-x1)
-
-Pred_Prob.f<-function(N,n1,x1,beta_par,Dcut,PostProb){
-  n2<-N-n1
-  i<-seq(0,n2)
-  PP_i<- (VGAM::dbetabinom.ab(x=i,size=n2,shape1=beta_par[1]+x1,shape2=beta_par[2]+n1-x1))*
-    as.numeric((1-pbeta(Dcut,beta_par[1]+x1+i,beta_par[2]+N-x1-i))>PostProb);
-  PP<-sum(PP_i)
-  return(PP)
-}
-
-# Pred_Prob.f(N=40,n1=23,x1=16,beta_par=c(0.6,0.4),Dcut=0.6,PostProb=0.9) # Example Lee 2008, p97, Table 1 (PP in text)
-
-
-#--------------------------------------------------------------------------------------------#
-# Functions to calculate decision rules for posterior probability, for efficacy and futility #
-#--------------------------------------------------------------------------------------------#
-
-# BEMPO interim efficacy stopping rule is P(Delta>Dcut)>=PostProb
-# PostProb=1 means never stopping for efficacy
-# PostProb=0 means always stopping for efficacy
-#-------------------------------------------------------------------
-
-POST_dec_eff<-function(n_,PostProb,Dcut,beta_par){ # For efficacy
-  x<-P_Bayes<-0
-
-  while(P_Bayes<PostProb & x<=n_){
-    P_Bayes<-1-pbeta(Dcut,shape1=x+beta_par[1],shape2=n_-x+beta_par[2])
-    x<-x+1
-  }
-
-  if (PostProb==0 | PostProb==1){return(list(P_Bayes=NA,x=NA))}
-  else {return(list(P_Bayes=P_Bayes,x=x-1))}
-}
-
-# Check: POST_dec_eff(n_=5,PostProb=0.9,Dcut=0.3,beta_par=c(0.5,0.5))  # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
-# Check: POST_dec_eff(n_=10,PostProb=0.9,Dcut=0.3,beta_par=c(0.5,0.5))
-# Check: POST_dec_eff(n_=15,PostProb=0.8,Dcut=0.3,beta_par=c(0.5,0.5))
-# Check: POST_dec_eff(n_=5,PostProb=1,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
-# Check: POST_dec_eff(n_=5,PostProb=0,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
-
-# BEMPO interim futility stopping rule is P(Delta<=D_cut)>PostProb
-# PostProb=1 means never stopping for futility
-# PostProb=0 means always stopping for futility
-#---------------------------------------------------------------------
-
-POST_dec_fut<-function(n_,PostProb,Dcut,beta_par){ # For futility
-  x<-n_
-  P_Bayes<-0
-
-  while(P_Bayes<=PostProb & x>=0){
-    P_Bayes<- pbeta(Dcut,shape1=x+beta_par[1],shape2=n_-x+beta_par[2])
-    x<-x-1
-  }
-
-  if (PostProb==0 | PostProb==1){return(list(P_Bayes=NA,x=NA))}
-  else {return(list(P_Bayes=P_Bayes,x=x+1))}
-}
-
-# Check: POST_dec_fut(n_=5,PostProb=0.7,Dcut=0.3,beta_par=c(0.5,0.5)) # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
-# Check: POST_dec_fut(n_=10,PostProb=0.7,Dcut=0.3,beta_par=c(0.5,0.5))
-# Check: POST_dec_fut(n_=5,PostProb=0,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
-# Check: POST_dec_fut(n_=5,PostProb=1,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
-
-
-#-------------------------------------------------------------------------------------------------------#
-# Functions to calculate decision rules for posterior predictive probability, for efficacy and futility #
-#-------------------------------------------------------------------------------------------------------#
-
-# BEMPR interim efficacy stopping rule is PP>=PredProb
-#
-# PredProb=1 means never stopping for efficacy
-# PredProb=0 means always stopping for efficacy
-#-------------------------------------------
-
-PP_dec_eff<-function(PredProb,...){ # For efficacy
-  args<-list(...)
-  x<-PP<-0
-
-  while(PP<PredProb & x<=args$n1){
-    PP<-Pred_Prob.f(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
-    x<-x+1
-  }
-
-  if (PredProb==0 | PredProb==1){return(list(PP=NA,x=NA))}
-  else {return(list(PP=PP,x=x-1))}
-}
-
-# Check: PP_dec_eff(PredProb=0.9,N=15,n1=5,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
-# Check: PP_dec_eff(PredProb=0.9,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7)
-# Check: POST_dec_eff(n_=15,PostProb=0.7,Dcut=0.3,beta_par=c(0.5,0.5))
-# Check: PP_dec_eff(PredProb=0,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
-# Check: PP_dec_eff(PredProb=1,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
-
-# BEMPR interim futility stopping rule is PP<PredProb
-#
-# PredProb=0 means never stopping for futility
-# PredProb=1 means always stopping for futility
-#---------------------------------------------------
-
-PP_dec_fut<-function(PredProb,...){ # For futility
-  args<-list(...)
-  x<-args$n1
-  PP<-1
-
-  while(PP>=PredProb & x>=0){
-    PP<-Pred_Prob.f(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
-    x<-x-1
-  }
-  if (PredProb==0 | PredProb==1){return(list(PP=NA,x=NA))}
-  else {return(list(PP=PP,x=x+1))}
-
-}
-
-
-# Check: PP_dec_fut(PredProb=0.3,N=15,n1=5 ,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) # default example on https://biostatistics.mdanderson.org/shinyapps/BEMPR/
-# Check: PP_dec_fut(PredProb=0.3,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7)
-# Check: PP_dec_fut(PredProb=0  ,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
-# Check: PP_dec_fut(PredProb=1  ,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
+#' test1<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,
+#'  P_fut=0.7,Delta_eff=0.3,P_eff=0.9,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
+#' test2<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,
+#'  P_fut=1  ,Delta_eff=0.3,P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
+#' test3<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0.3,
+#'  P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=10)
+#' test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0,P_eff=1,
+#'  Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
 
 #-----------------------------------------------------------------------------------------------------------------------#
 # Function to calculate                                                                                                 #
