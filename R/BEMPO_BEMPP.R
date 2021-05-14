@@ -1,37 +1,4 @@
 
-#---------------------------------------------#
-# Function to calculate posterior probability #
-#---------------------------------------------#
-
-# Definition: P(Delta>Dcut|n,x) ~beta(beta_par[1]+x,beta_par[2]+n-x) with prior beta distribution beta_par
-
-Post_Prob.f<-function(n,x,beta_par,Dcut){
-  1-pbeta(Dcut,x+beta_par[1],n-x+beta_par[2])
-}
-
-Post_Prob.f(n=40,x=16+0,beta_par=c(0.6,0.4),Dcut=0.6) # Example Lee 2008, p97, Table 1 (first line of Panel B: Y=0)
-
-
-#----------------------------------------------#
-# Function to calculate predictive probability #
-#----------------------------------------------#
-
-# Definition: Sum(P(X2=i|x1)I[P(Delta>Dcut|x1,X2=i)>PostProb]) for all X2=i,...,n2,
-# with P(Delta>Dcut|x1,X2=i) ~beta(beta_par[1]+x1+i,beta_par[2]+N-x1-i) with prior distribution beta_par
-# with X2~beta-binomial(n2,beta_par[1]+x1,beta_par[2]+n1-x1)
-
-Pred_Prob.f<-function(N,n1,x1,beta_par,Dcut,PostProb){
-  n2<-N-n1
-  i<-seq(0,n2)
-  PP_i<- (VGAM::dbetabinom.ab(x=i,size=n2,shape1=beta_par[1]+x1,shape2=beta_par[2]+n1-x1))*
-    as.numeric((1-pbeta(Dcut,beta_par[1]+x1+i,beta_par[2]+N-x1-i))>PostProb);
-  PP<-sum(PP_i)
-  return(PP)
-}
-
-# Pred_Prob.f(N=40,n1=23,x1=16,beta_par=c(0.6,0.4),Dcut=0.6,PostProb=0.9) # Example Lee 2008, p97, Table 1 (PP in text)
-
-
 #--------------------------------------------------------------------------------------------#
 # Functions to calculate decision rules for posterior probability, for efficacy and futility #
 #--------------------------------------------------------------------------------------------#
@@ -98,7 +65,7 @@ PP_dec_eff<-function(PredProb,...){ # For efficacy
   x<-PP<-0
   
   while(PP<PredProb & x<=args$n1){
-    PP<-Pred_Prob.f(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
+    PP<-Pred_Prob(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
     x<-x+1
   }
   
@@ -124,7 +91,7 @@ PP_dec_fut<-function(PredProb,...){ # For futility
   PP<-1
   
   while(PP>=PredProb & x>=0){
-    PP<-Pred_Prob.f(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
+    PP<-Pred_Prob(N=args$N,n1=args$n1,x1=x,beta_par=args$beta_par,Dcut=args$Dcut,PostProb=args$PostProb)
     x<-x-1
   }
   if (PredProb==0 | PredProb==1){return(list(PP=NA,x=NA))}
@@ -220,6 +187,7 @@ PP_dec_fut<-function(PredProb,...){ # For futility
 #'  P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=10)
 #' test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0,P_eff=1,
 #'  Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
+
 
 #-----------------------------------------------------------------------------------------------------------------------#
 # Function to calculate                                                                                                 #

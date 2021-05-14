@@ -2,25 +2,27 @@
 % Please edit documentation in R/Post_Prob.R
 \name{Post_Prob}
 \alias{Post_Prob}
-\title{Bayesian posterior probability P(Theta>cutoff|data;prior)}
+\title{Bayesian posterior probability}
 \usage{
-Post_Prob(n, x, beta_par, p)
+Post_Prob(n, x, beta_par, Dcut)
 }
 \arguments{
-\item{n}{number of patients for which results are available}
+\item{n}{number of patients}
 
 \item{x}{number of successes}
 
 \item{beta_par}{two shape parameters c(alpha,beta) for beta distribution}
 
-\item{p}{Proportion corresponding with some hypothesis, e.g. null hypothesis}
+\item{Dcut}{Proportion corresponding with some hypothesis}
 }
 \description{
-This function calculates the Bayesian posterior probability P(Theta>cutoff|data;prior)
+This function calculates the Bayesian posterior probability 
+P(Delta>Dcut|n,x) ~beta(beta_par[1]+x,beta_par[2]+n-x) with prior beta distribution beta_par
 }
 \examples{
 \dontrun{
-Post_Prob(n=68,x=52,beta_par=c(1,1),p=0.66)
+Post_Prob.f(n=40,x=16,beta_par=c(0.6,0.4),Dcut=0.6) # Example Lee 2008, p97, Table 1 
+(first line of Panel B: Y=0)
 }
 
 }

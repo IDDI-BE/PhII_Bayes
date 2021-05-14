@@ -2,35 +2,39 @@
 % Please edit documentation in R/Pred_Prob.R
 \name{Pred_Prob}
 \alias{Pred_Prob}
-\title{Posterior predictive probability of a successful trial}
+\title{Posterior predictive probability}
 \usage{
-Pred_Prob(N, n1, x1, beta_par, p, Delta_T)
+Pred_Prob(N, n1, x1, beta_par, Dcut, PostProb)
 }
 \arguments{
-\item{N}{total number of patients (stage1 + stage2)}
+\item{N}{total number of patients at the end of the study}
 
-\item{n1}{total number of patients in stage1}
+\item{n1}{number of patients currently observed}
 
-\item{x1}{number of successes in stage1}
+\item{x1}{number of successes currently observed}
 
-\item{beta_par}{two shape parameters c(alpha,beta) for beta distribution}
+\item{beta_par}{two shape parameters c(alpha,beta) for prior beta distribution}
 
-\item{p}{Proportion corresponding with some hypothesis, e.g. null hypothesis}
+\item{Dcut}{Proportion corresponding with some hypothesis}
 
-\item{Delta_T}{Threshold for succesful trial in terms of Bayesian posterior probability
-P(theta>p|x1+x2)>Delta_T}
+\item{PostProb}{Threshold for outcome at the end of the study, in terms of Bayesian posterior probability
+P(theta>Dcut|x1+x2)>PostProb}
 }
 \value{
-Probability of a succesful trial
+Predictive Probability for outcome at the end of the study
 }
 \description{
-Posterior predictive probability of a successful trial, given number of successes
-    at the end of stage1
+Posterior predictive probability for posterior probability outcome
+at the end of the trial, given currently observed number of patients and successes
+Definition: Sum(P(X2=i|x1)I[P(Delta>Dcut|x1,X2=i)>PostProb]) for all X2=i,...,n2,
+with P(Delta>Dcut|x1,X2=i) ~beta(beta_par[1]+x1+i,beta_par[2]+N-x1-i) with prior distribution beta_par
+with X2~beta-binomial(n2,beta_par[1]+x1,beta_par[2]+n1-x1)
 }
 \examples{
 \dontrun{
-Pred_Prob(N=68,n1=38,x1=27,beta_par=c(1  ,1)  ,p=0.664,Delta_T=0.95)
-Pred_Prob(N=40,n1=23,x1=16,beta_par=c(0.6,0.4),p=0.6  ,Delta_T=0.9 )
+Pred_Prob(N=68,n1=38,x1=27,beta_par=c(1  ,1)  ,Dcut=0.664,PostProb=0.95)
+Pred_Prob(N=40,n1=23,x1=16,beta_par=c(0.6,0.4),Dcut=0.6  ,PostProb=0.9 ) # Example Lee 2008, 
+p97, Table 1 (PP in text)
 }
 
 }
