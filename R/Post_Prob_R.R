@@ -6,17 +6,16 @@
 #' with prior beta distribution beta_par, and Delta_ctrl~beta(beta_par_ctrl[1]+x,beta_par_ctrl[2]+n_ctrl-x_ctrl) 
 #' @param n_exp number of patients in experimental arm (scalar)
 #' @param n_ctrl number of patients in control arm (scalar)
-#' @param x_exp number of successes in experimental arm (scalar)
-#' @param x_ctrl number of successes in control arm (scalar)
 #' @param beta_par_exp two shape parameters c(alpha,beta) for prior beta distribution experimental arm (scalar)
 #' @param beta_par_ctrl two shape parameters c(alpha,beta) for prior beta distribution control arm (scalar)
-#' @param p_exp binomial parameter experimental arm, corresponding with some hypothesis (scalar)
-#' @param p_ctrl binomial parameter control arm, corresponding with some hypothesis (scalar)
-#' @param Dcut Difference between two proportions corresponding with some hypothesis (can be a vector)
+#' @param p_exp observed proportion experimental arm
+#' @param p_ctrl observed proportion control arm
+#' @param D_cut True difference between two proportions (can be a vector)
 #' @param distrisize Size of sampled distributions (the larger, the better)
 #' @examples
 #' Post_Prob_R(p_exp=0.475,p_ctrl=0.475-5/50,n_exp=50,n_ctrl=50,distrisize=10^3,
 #' D_cut=c(0,0.05,0.075,0.1),beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
+#' @importFrom stats rbeta
 #' @export
 
 Post_Prob_R<-function(p_exp,p_ctrl,n_exp,n_ctrl,distrisize,D_cut,beta_par_exp,beta_par_ctrl){
