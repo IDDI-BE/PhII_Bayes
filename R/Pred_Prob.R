@@ -1,6 +1,6 @@
 
 
-#' @title Posterior predictive probability
+#' @title Posterior predictive probability, given 1 observed proportion
 #'
 #' @description Posterior predictive probability for posterior probability outcome
 #' at the end of the trial, given currently observed number of patients and successes

@@ -2,7 +2,7 @@
 % Please edit documentation in R/BEMPO_BEMPP.R
 \name{BEMPP}
 \alias{BEMPP}
-\title{Bayesian efficacy monitoring}
+\title{Bayesian efficacy monitoring of 1 binomial parameter}
 \usage{
 BEMPP(
   N,

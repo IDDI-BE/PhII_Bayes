@@ -2,7 +2,7 @@
 % Please edit documentation in R/Pred_Prob.R
 \name{Pred_Prob}
 \alias{Pred_Prob}
-\title{Posterior predictive probability}
+\title{Posterior predictive probability, given 1 observed proportion}
 \usage{
 Pred_Prob(N, n1, x1, beta_par, Dcut, PostProb)
 }

@@ -105,7 +105,7 @@ PP_dec_fut<-function(PredProb,...){ # For futility
 # Check: PP_dec_fut(PredProb=0  ,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
 # Check: PP_dec_fut(PredProb=1  ,N=15,n1=10,beta_par=c(0.5,0.5),Dcut=0.3,PostProb=0.7) #NA
 
-#' @title Bayesian efficacy monitoring
+#' @title Bayesian efficacy monitoring of 1 binomial parameter
 #' @description
 #' Single arm Bayesian Efficacy Monitoring Via Predictive Probability (BEMPR) or Bayesian Efficacy Monitoring Via Posterior Probability (BEMPO) \cr
 #' The frequentist properties can be investigated for combinations of \cr

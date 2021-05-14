@@ -2,7 +2,7 @@
 % Please edit documentation in R/Post_Prob.R
 \name{Post_Prob}
 \alias{Post_Prob}
-\title{Bayesian posterior probability}
+\title{Bayesian posterior probability, given 1 observed proportion}
 \usage{
 Post_Prob(n, x, beta_par, Dcut)
 }

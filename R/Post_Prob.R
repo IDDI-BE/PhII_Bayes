@@ -1,6 +1,5 @@
 
-
-#' @title Bayesian posterior probability
+#' @title Bayesian posterior probability, given 1 observed proportion
 #'
 #' @description This function calculates the Bayesian posterior probability 
 #' P(Delta>Dcut|n,x) ~beta(beta_par[1]+x,beta_par[2]+n-x) with prior beta distribution beta_par
