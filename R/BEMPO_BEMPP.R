@@ -176,6 +176,8 @@ PP_dec_fut<-function(PredProb,...){ # For futility
 #' }
 #'@references Lee JJ, Liu DD.A predictive probability design for phase II cancer clinical trialsClinical Trials 2008; 5: 93–106
 #'@importFrom VGAM dbetabinom.ab
+#'@importFrom utils txtProgressBar 
+#'@importFrom utils setTxtProgressBar
 #'@export
 #'
 #' @examples #Check versus https://biostatistics.mdanderson.org/shinyapps/BEMPO/
@@ -194,9 +196,6 @@ PP_dec_fut<-function(PredProb,...){ # For futility
 # 1) Decision rules                                                                                                     #
 # 2) operating characteristics for Bayesian Efficacy Monitoring Via Predictive (BEMPR) or Posterior Probability (BEMPO) #
 #-----------------------------------------------------------------------------------------------------------------------#
-
-# N=15;p=0.5; design="BEMPO"; interim_type="fix";interim=c(5,10);Delta_fut=0.3;P_fut=0.7; Delta_eff=0.3;P_eff=0.9;Delta_fin=0.3;P_fin=0.8;Beta_dis=c(0.5,0.5);nsim=10
-# N=15;p=0.5; design="BEMPR"; interim_type="fix";interim=c(5,10);              P_fut=0.7;               P_eff=0.9;Delta_fin=0.3;P_fin=0.8;Beta_dis=c(0.5,0.5);nsim=10
 
 BEMPP<-function(N,p,design,interim_type,interim,cohortsize=NULL,interimstart=NULL,interimstop=NULL,Delta_fut=NULL,P_fut,Delta_eff=NULL,P_eff,Delta_fin,P_fin,Beta_dis,nsim){
 
@@ -329,10 +328,12 @@ BEMPP<-function(N,p,design,interim_type,interim,cohortsize=NULL,interimstart=NUL
 
       # Start simulations
       sim<-data.frame(sim=1:nsim,fut_int=0,fut_int_nr=0,eff_int=0,eff_int_nr=0,fin=0,N_actual=NA)
+      pb <-  txtProgressBar(min = 0, max = nsim, style = 3) # set progress bar
 
       if (nsim>0){
         for (c in 1:nsim){
-
+          
+          setTxtProgressBar(pb, c)
           data<-rbinom(n=N.l,size=1,prob=p.l)
 
           for (d in 1:length(interim.f)){
