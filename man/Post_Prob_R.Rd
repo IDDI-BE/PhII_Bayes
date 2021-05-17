@@ -35,7 +35,7 @@ Post_Prob_R(
 \description{
 This function calculates the Bayesian posterior probability 
 P(Delta>Dcut|n,x) with Delta=Delta_exp-Delta_ctrl, with Delta_exp~beta(beta_par_exp[1]+x,beta_par_exp[2]+n_exp-x_exp) 
-with prior beta distribution beta_par, and Delta_ctrl~beta(beta_par_ctrl[1]+x,beta_par_ctrl[2]+n_ctrl-x_ctrl)
+with prior beta distribution beta_par_exp, and Delta_ctrl~beta(beta_par_ctrl[1]+x,beta_par_ctrl[2]+n_ctrl-x_ctrl)
 }
 \examples{
 Post_Prob_R(p_exp=0.475,p_ctrl=0.475-5/50,n_exp=50,n_ctrl=50,distrisize=10^3,

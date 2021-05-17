@@ -3,7 +3,7 @@
 #'
 #' @description This function calculates the Bayesian posterior probability 
 #' P(Delta>Dcut|n,x) with Delta=Delta_exp-Delta_ctrl, with Delta_exp~beta(beta_par_exp[1]+x,beta_par_exp[2]+n_exp-x_exp) 
-#' with prior beta distribution beta_par, and Delta_ctrl~beta(beta_par_ctrl[1]+x,beta_par_ctrl[2]+n_ctrl-x_ctrl) 
+#' with prior beta distribution beta_par_exp, and Delta_ctrl~beta(beta_par_ctrl[1]+x,beta_par_ctrl[2]+n_ctrl-x_ctrl) 
 #' @param n_exp number of patients in experimental arm (scalar)
 #' @param n_ctrl number of patients in control arm (scalar)
 #' @param beta_par_exp two shape parameters c(alpha,beta) for prior beta distribution experimental arm (scalar)

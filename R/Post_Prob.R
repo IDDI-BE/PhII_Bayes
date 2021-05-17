@@ -7,6 +7,7 @@
 #' @param x number of successes
 #' @param beta_par two shape parameters c(alpha,beta) for beta distribution
 #' @param Dcut Proportion corresponding with some hypothesis
+#' @return Bayesian posterior probability
 #' @examples
 #'\dontrun{
 #' Post_Prob.f(n=40,x=16,beta_par=c(0.6,0.4),Dcut=0.6) # Example Lee 2008, p97, Table 1 

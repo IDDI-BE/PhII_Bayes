@@ -15,6 +15,9 @@ Post_Prob(n, x, beta_par, Dcut)
 
 \item{Dcut}{Proportion corresponding with some hypothesis}
 }
+\value{
+Bayesian posterior probability
+}
 \description{
 This function calculates the Bayesian posterior probability 
 P(Delta>Dcut|n,x) ~beta(beta_par[1]+x,beta_par[2]+n-x) with prior beta distribution beta_par
