@@ -16,6 +16,7 @@
 #'     P(theta>Dcut|x1+x2)>PostProb, with x1 the difference in proportions at interim and x2 at the final
 #' @param beta_par_exp two shape parameters c(alpha,beta) for prior beta distribution experimental arm
 #' @param beta_par_ctrl two shape parameters c(alpha,beta) for prior beta distribution control arm
+#' @param printprogress print progress bar (logical)
 #' @return Predictive Probability for outcome at the end of the study
 #' @examples
 #' Pred_Prob_R(p_exp=0.475,p_ctrl=0.475-0.08,N_exp=100,N_ctrl=100,n1_exp=50,n1_ctrl=50,
@@ -25,14 +26,14 @@
 #' @importFrom utils setTxtProgressBar
 #' @export
 
-Pred_Prob_R <- function(p_exp,p_ctrl,N_exp,N_ctrl,n1_exp,n1_ctrl,distrisize=1000,nsim=1000,Dcut,PostProb,beta_par_exp,beta_par_ctrl){
+Pred_Prob_R <- function(p_exp,p_ctrl,N_exp,N_ctrl,n1_exp,n1_ctrl,distrisize=1000,nsim=1000,Dcut,PostProb,beta_par_exp,beta_par_ctrl,printprogress=T){
   
   postprob_sim <- rep(NA,nsim) # Empty vector for filling in 'for' loop
-  pb <-  txtProgressBar(min = 0, max = nsim, style = 3)
+  if (printprogress==T){pb <-  txtProgressBar(min = 0, max = nsim, style = 3)}
   
   for (i in 1:nsim){
     
-    setTxtProgressBar(pb, i)
+    if (printprogress==T){setTxtProgressBar(pb, i)}
     
     x1_exp  <- p_exp *n1_exp
     x1_ctrl <- p_ctrl*n1_ctrl

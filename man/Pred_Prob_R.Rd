@@ -16,7 +16,8 @@ Pred_Prob_R(
   Dcut,
   PostProb,
   beta_par_exp,
-  beta_par_ctrl
+  beta_par_ctrl,
+  printprogress = T
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ P(theta>Dcut|x1+x2)>PostProb, with x1 the difference in proportions at interim a
 \item{beta_par_exp}{two shape parameters c(alpha,beta) for prior beta distribution experimental arm}
 
 \item{beta_par_ctrl}{two shape parameters c(alpha,beta) for prior beta distribution control arm}
+
+\item{printprogress}{print progress bar (logical)}
 }
 \value{
 Predictive Probability for outcome at the end of the study
