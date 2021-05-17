@@ -26,7 +26,7 @@ POST_dec_eff<-function(n_,PostProb,Dcut,beta_par){ # For efficacy
 # Check: POST_dec_eff(n_=5,PostProb=1,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
 # Check: POST_dec_eff(n_=5,PostProb=0,Dcut=0.3,beta_par=c(0.5,0.5)) #NA
 
-# BEMPO interim futility stopping rule is P(Delta<=D_cut)>PostProb
+# BEMPO interim futility stopping rule is P(Delta<=Dcut)>PostProb
 # PostProb=1 means never stopping for futility
 # PostProb=0 means always stopping for futility
 #---------------------------------------------------------------------

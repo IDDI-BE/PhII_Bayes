@@ -14,8 +14,8 @@
 #' @param Dcut True difference between two proportions (can be a vector)
 #' @param PostProb Threshold for outcome at the end of the study, in terms of Bayesian posterior probability
 #'     P(theta>Dcut|x1+x2)>PostProb, with x1 the difference in proportions at interim and x2 at the final
-#' @param beta_par_exp two shape parameters c(alpha,beta) for prior beta distribution experimental arm (scalar)
-#' @param beta_par_ctrl two shape parameters c(alpha,beta) for prior beta distribution control arm (scalar)
+#' @param beta_par_exp two shape parameters c(alpha,beta) for prior beta distribution experimental arm
+#' @param beta_par_ctrl two shape parameters c(alpha,beta) for prior beta distribution control arm
 #' @return Predictive Probability for outcome at the end of the study
 #' @examples
 #' Pred_Prob_R(p_exp=0.475,p_ctrl=0.475-0.08,N_exp=100,N_ctrl=100,n1_exp=50,n1_ctrl=50,

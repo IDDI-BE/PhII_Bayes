@@ -41,9 +41,9 @@ Pred_Prob_R(
 \item{PostProb}{Threshold for outcome at the end of the study, in terms of Bayesian posterior probability
 P(theta>Dcut|x1+x2)>PostProb, with x1 the difference in proportions at interim and x2 at the final}
 
-\item{beta_par_exp}{two shape parameters c(alpha,beta) for prior beta distribution experimental arm (scalar)}
+\item{beta_par_exp}{two shape parameters c(alpha,beta) for prior beta distribution experimental arm}
 
-\item{beta_par_ctrl}{two shape parameters c(alpha,beta) for prior beta distribution control arm (scalar)}
+\item{beta_par_ctrl}{two shape parameters c(alpha,beta) for prior beta distribution control arm}
 }
 \value{
 Predictive Probability for outcome at the end of the study

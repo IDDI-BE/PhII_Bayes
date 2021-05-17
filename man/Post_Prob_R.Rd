@@ -10,7 +10,7 @@ Post_Prob_R(
   n_exp,
   n_ctrl,
   distrisize,
-  D_cut,
+  Dcut,
   beta_par_exp,
   beta_par_ctrl
 )
@@ -26,7 +26,7 @@ Post_Prob_R(
 
 \item{distrisize}{Size of sampled distributions (the larger, the better)}
 
-\item{D_cut}{True difference between two proportions (can be a vector)}
+\item{Dcut}{True difference between two proportions (can be a vector)}
 
 \item{beta_par_exp}{two shape parameters c(alpha,beta) for prior beta distribution experimental arm (scalar)}
 
@@ -39,5 +39,5 @@ with prior beta distribution beta_par_exp, and Delta_ctrl~beta(beta_par_ctrl[1]+
 }
 \examples{
 Post_Prob_R(p_exp=0.475,p_ctrl=0.475-5/50,n_exp=50,n_ctrl=50,distrisize=10^3,
-D_cut=c(0,0.05,0.075,0.1),beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
+Dcut=c(0,0.05,0.075,0.1),beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
 }
