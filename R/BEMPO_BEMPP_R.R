@@ -68,25 +68,15 @@
 #'@importFrom utils setTxtProgressBar
 #'@export
 #'
-#' @examples #Check versus https://biostatistics.mdanderson.org/shinyapps/BEMPO/
-#' test1<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,
-#'  P_fut=0.7,Delta_eff=0.3,P_eff=0.9,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-#' test2<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,
-#'  P_fut=1  ,Delta_eff=0.3,P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-#' test3<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0.3,
-#'  P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=10)
-#' test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0,P_eff=1,
-#'  Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-
-
-#-----------------------------------------------------------------------------------------------------------------------#
-# Function to calculate                                                                                                 #
-# 1) Decision rules                                                                                                     #
-# 2) operating characteristics for Bayesian Efficacy Monitoring Via Predictive (BEMPR) or Posterior Probability (BEMPO) #
-#-----------------------------------------------------------------------------------------------------------------------#
-
-# N=c(100);ar=1; p_exp=c(0.475);p_ctrl=c(0.35); interim=c(0.3,0.5,0.75); Delta_fut=NULL;P_fut=c(0.25,0.5,0.5);Delta_eff=c(0,0,0);P_eff=c(1,0.75,0.75);
-# Delta_fin=0;P_fin=0.75; distrisize=10^3; PP_nsim=10^3; design_fut="futPO"; design_eff="effPO";nsim=1000
+#' @examples
+#' \donttest{
+#' pow<-BM_R(N=c(100),ar=1,p_exp=c(0.475),p_ctrl=c(0.35),interim=c(0.3,0.5,0.75),Delta_fut=NULL,
+#' P_fut=c(0.25,0.5,0.5),Delta_eff=c(0,0,0),P_eff=c(1,0.75,0.75),Delta_fin=0,P_fin=0.75, 
+#' distrisize=10^3, PP_nsim=10^3, design_fut="futPR", design_eff="effPO",nsim=1000)
+#' typeI<-BM_R(N=c(100),ar=1,p_exp=c(0.475),p_ctrl=c(0.475),interim=c(0.3,0.5,0.75),Delta_fut=NULL,
+#' P_fut=c(0.25,0.5,0.5),Delta_eff=c(0,0,0),P_eff=c(1,0.75,0.75),Delta_fin=0,P_fin=0.75, 
+#' distrisize=10^3, PP_nsim=10^3, design_fut="futPR", design_eff="effPO",nsim=1000)
+#' }
 
 BM_R<-function(N,ar,p_exp,p_ctrl,design_fut,design_eff,interim,Delta_fut=NULL,P_fut,Delta_eff=NULL,P_eff,Delta_fin,P_fin,beta_par_exp,beta_par_ctrl,nsim,distrisize=10^3,PP_nsim=10^3){
 
@@ -97,27 +87,25 @@ BM_R<-function(N,ar,p_exp,p_ctrl,design_fut,design_eff,interim,Delta_fut=NULL,P_
   # Create dataframe with empty vectors for operating characteristics
 
   param<-data.frame(cbind(N,p_exp,p_ctrl,pow=0,eff_fin=0,eff_stop=0,fut=0,fut_fin=0,fut_stop=0,N_avg=NA,scenario=1:length(N))) # pow=proportion(simulations) where decision efficacy at interim or final analysis
-                                                                                                  # eff_fin=proportion(simulations) where decision efficacy at final analysis
-                                                                                                  # eff_stop=proportion(simulations) where decision efficacy at interim analysis
-                                                                                                  # fut=proportion(simulations) where decision of futility at interim or final analysis
-                                                                                                  # fut_fin=proportion(simulations) where decision futility at final analysis
-                                                                                                  # fut_stop=proportion(simulations) where decision futility at interim analysis
-                                                                                                  # N_avg=average number of patients over all simulations
-                                                                                                  # scenario= scenario (combination of p and N)
-  
-  sum(is.na(param$N_avg))
+                                                                                                                               # eff_fin=proportion(simulations) where decision efficacy at final analysis
+                                                                                                                               # eff_stop=proportion(simulations) where decision efficacy at interim analysis
+                                                                                                                               # fut=proportion(simulations) where decision of futility at interim or final analysis
+                                                                                                                               # fut_fin=proportion(simulations) where decision futility at final analysis
+                                                                                                                               # fut_stop=proportion(simulations) where decision futility at interim analysis
+                                                                                                                               # N_avg=average number of patients over all simulations
+                                                                                                                               # scenario= scenario (combination of p and N)
   
   # Create scenario number
   scenario<-0
 
   for (a in 1:length(N)){
 
-    p_exp.l<-p_exp[a]
-    p_ctrl.l<-p_ctrl[a]
-    N.l<-N[a]
+    p_exp.l  <-p_exp[a]
+    p_ctrl.l <-p_ctrl[a]
+    N.l      <-N[a]
     
-    N_ctrl.l<-floor(N.l*(1/(ar+1)))
-    N_exp.l <-N.l-N_ctrl.l
+    N_ctrl.l <-floor(N.l*(1/(ar+1)))
+    N_exp.l  <-N.l-N_ctrl.l
     
     scenario<-scenario+1
     print(paste0("scenario ",scenario,":p_exp=",p_exp.l,";p_ctrl=",p_ctrl.l,";N=",N.l))
@@ -129,11 +117,11 @@ BM_R<-function(N,ar,p_exp,p_ctrl,design_fut,design_eff,interim,Delta_fut=NULL,P_
     param[,"interim"]<-paste(interim.f,collapse =',')
     param[,"N_interim"]<-length(interim.f)  # Number of interims (without final) for in table
 
-    if (length(Delta_fut)==1){Delta_fut<-rep(Delta_fut,length(interim.f))} # If P_fut is a scalar, change it into a vector
-    if (length(Delta_eff)==1){Delta_eff<-rep(Delta_eff,length(interim.f))} # If P_eff is a scalar, change it into a vector
+    if (length(Delta_fut)==1){Delta_fut<-rep(Delta_fut,length(interim.f))} # If P_fut is a scalar, change it into a vector (same for each interim)
+    if (length(Delta_eff)==1){Delta_eff<-rep(Delta_eff,length(interim.f))} # If P_eff is a scalar, change it into a vector (same for each interim)
 
-    if (length(P_fut)==1)    {P_fut    <-rep(P_fut    ,length(interim.f))} # If P_fut is a scalar, change it into a vector
-    if (length(P_eff)==1)    {P_eff    <-rep(P_eff    ,length(interim.f))} # If P_eff is a scalar, change it into a vector
+    if (length(P_fut)==1)    {P_fut    <-rep(P_fut    ,length(interim.f))} # If P_fut is a scalar, change it into a vector (same for each interim)
+    if (length(P_eff)==1)    {P_eff    <-rep(P_eff    ,length(interim.f))} # If P_eff is a scalar, change it into a vector (same for each interim)
 
 
     # Start simulations
@@ -149,63 +137,63 @@ BM_R<-function(N,ar,p_exp,p_ctrl,design_fut,design_eff,interim,Delta_fut=NULL,P_
 
       for (c in 1:length(interim.f)){
 
-        n1_ctrl.l<-floor(interim.f[c]*(1/(ar+1)))
-        n1_exp.l <-interim.f[c]-n1_ctrl.l
+        n1_ctrl.l <-floor(interim.f[c]*(1/(ar+1)))
+        n1_exp.l  <-interim.f[c]-n1_ctrl.l
         
         if (sim[b,]$fut_int==0 & sim[b,]$eff_int==0){ # if no decision of futility or efficacy yet
 
-          sim[b,]$N_actual<-interim.f[c]
-          succ_exp.l <-sum(exp [1:n1_exp.l ]);ph_exp.l =succ_exp.l /n1_exp.l
-          succ_ctrl.l<-sum(ctrl[1:n1_ctrl.l]);ph_ctrl.l=succ_ctrl.l/n1_ctrl.l
+          sim[b,]$N_actual <-interim.f[c]
+          succ_exp.l       <-sum(exp [1:n1_exp.l ]); ph_exp.l =succ_exp.l /n1_exp.l  # observed proportion("phat")
+          succ_ctrl.l      <-sum(ctrl[1:n1_ctrl.l]); ph_ctrl.l=succ_ctrl.l/n1_ctrl.l # observed proportion("phat")
 
           if (design_fut=="futPR" & !P_fut[c]==0) { # Conditions for no futility interim
             
             PP<-Pred_Prob_R(p_exp=ph_exp.l,p_ctrl=ph_ctrl.l,N_exp=N_exp.l,N_ctrl=N_ctrl.l,n1_exp=n1_exp.l,n1_ctrl=n1_ctrl.l,distrisize=distrisize,nsim=PP_nsim,PostProb=P_fin,Dcut=Delta_fin,beta_par_exp=c(1,1),beta_par_ctrl=c(1,1),printprogress=F)
             if (PP<P_fut[c]){# first check interim futility
-              sim[c,]$fut_int_nr <- c   # futility indicator for specific interim analysis
-              sim[c,]$fut_int    <- 1}  # futility indicator at interim
+              sim[b,]$fut_int_nr <- c   # futility indicator for specific interim analysis
+              sim[b,]$fut_int    <- 1}  # futility indicator at interim
           }
           
           if (design_fut=="futPO" & !P_fut[c]==1) { # Conditions for no futility interim
             
             PO<-Post_Prob_R(p_exp=ph_exp.l,p_ctrl=ph_ctrl.l,n_exp=n1_exp.l,n_ctrl=n1_ctrl.l,distrisize=distrisize,Dcut=Delta_fut[c],beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
             if (PO$prob<P_fut[c]){# first check interim futility
-              sim[c,]$fut_int_nr <- c   # futility indicator for specific interim analysis
-              sim[c,]$fut_int    <- 1}  # futility indicator at interim
+              sim[b,]$fut_int_nr <- c   # futility indicator for specific interim analysis
+              sim[b,]$fut_int    <- 1}  # futility indicator at interim
           }
 
 
-          if ( (design_eff=="effPR" & !P_eff[c]==1)) { # Conditions for no efficacy interim
+          if (design_eff=="effPR" & !P_eff[c]==1) { # Conditions for no efficacy interim
             
             PP<-Pred_Prob_R(p_exp=ph_exp.l,p_ctrl=ph_ctrl.l,N_exp=N_exp.l,N_ctrl=N_ctrl.l,n1_exp=n1_exp.l,n1_ctrl=n1_ctrl.l,distrisize=distrisize,nsim=PP_nsim,PostProb=P_fin,Dcut=Delta_fin,beta_par_exp=c(1,1),beta_par_ctrl=c(1,1),printprogress=F)
             if (PP>=P_eff[c]){# then check interim efficacy
-              sim[c,]$eff_int_nr <- c   # futility indicator for specific interim analysis
-              sim[c,]$eff_int    <- 1}  # futility indicator at interim
+              sim[b,]$eff_int_nr <- c   # futility indicator for specific interim analysis
+              sim[b,]$eff_int    <- 1}  # futility indicator at interim
           }
           
-          if ( (design_eff=="effPO" & !P_eff[c]==1)) { # Conditions for no efficacy interim
+          if (design_eff=="effPO" & !P_eff[c]==1) { # Conditions for no efficacy interim
             
             PO<-Post_Prob_R(p_exp=ph_exp.l,p_ctrl=ph_ctrl.l,n_exp=n1_exp.l,n_ctrl=n1_ctrl.l,distrisize=distrisize,Dcut=Delta_eff[c],beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
             if (PO$prob>=P_eff[c]){# first check interim futility
-              sim[c,]$eff_int_nr <- c   # futility indicator for specific interim analysis
-              sim[c,]$eff_int    <- 1}  # futility indicator at interim
+              sim[b,]$eff_int_nr <- c   # futility indicator for specific interim analysis
+              sim[b,]$eff_int    <- 1}  # futility indicator at interim
           }
 
         } # 'if' accolade (no decision of futility or efficacy yet)
 
       } #c-loop [number of interim analyses]
 
-      if (sim[c,]$fut_int==0 & sim[c,]$eff_int==0){ # Only final analysis if no stop at interim analyses for futility or efficacy
+      if (sim[b,]$fut_int==0 & sim[b,]$eff_int==0){ # Only final analysis if no stop at interim analyses for futility or efficacy
         
-        succ_exp.l <-sum(exp [1:N_exp.l ]);ph_exp.l  =succ_exp.l /N_exp.l
-        succ_ctrl.l<-sum(ctrl[1:N_ctrl.l]);ph_ctrl.l =succ_ctrl.l/N_ctrl.l
+        succ_exp.l <-sum(exp );ph_exp.l  =succ_exp.l /N_exp.l
+        succ_ctrl.l<-sum(ctrl);ph_ctrl.l =succ_ctrl.l/N_ctrl.l
         
-        PO<-Post_Prob_R(p_exp=p_exp.l,p_ctrl=p_ctrl.l,n_exp=n1_exp.l,n_ctrl=n1_ctrl.l,distrisize=distrisize,Dcut=Delta_fin,beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
+        PO<-Post_Prob_R(p_exp=ph_exp.l,p_ctrl=ph_ctrl.l,n_exp=n1_exp.l,n_ctrl=n1_ctrl.l,distrisize=distrisize,Dcut=Delta_fin,beta_par_exp=c(1,1),beta_par_ctrl=c(1,1))
         
-        sim[c,]$fin<-as.numeric(PO$prob>=P_fin)
-        sim[c,]$N_actual<-N.l}
+        sim[b,]$fin<-as.numeric(PO$prob>=P_fin)
+        sim[b,]$N_actual<-N.l}
 
-    } #c-loop [number of simulations]
+    } #b-loop [number of simulations]
 
     param[scenario,]$pow      <- (sum(sim$fin)+sum(sim$eff_int))/nsim  # Frequency efficacy decision (whether at final or at interim)
     param[scenario,]$eff_fin  <- sum(sim$fin)/nsim                     # Frequency efficacy decision at final
@@ -229,8 +217,3 @@ BM_R<-function(N,ar,p_exp,p_ctrl,design_fut,design_eff,interim,Delta_fut=NULL,P_
 
   return(param[,c(firstcols,lastcols)])
 } # end function
-
-#pow<-BM_R(N=c(100),ar=1, p_exp=c(0.475),p_ctrl=c(0.35), interim=c(0.3,0.5,0.75), Delta_fut=NULL,P_fut=c(0.25,0.5,0.5),Delta_eff=c(0,0,0),P_eff=c(1,0.75,0.75),
-#         Delta_fin=0,P_fin=0.75, distrisize=10^3, PP_nsim=10^3, design_fut="futPR", design_eff="effPO",nsim=100)
-#typeI<-BM_R(N=c(100),ar=1, p_exp=c(0.475),p_ctrl=c(0.475), interim=c(0.3,0.5,0.75), Delta_fut=NULL,P_fut=c(0.25,0.5,0.5),Delta_eff=c(0,0,0),P_eff=c(1,0.75,0.75),
-#          Delta_fin=0,P_fin=0.75, distrisize=10^3, PP_nsim=10^3, design_fut="futPR", design_eff="effPO",nsim=1000)

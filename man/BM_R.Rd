@@ -109,15 +109,14 @@ BEMPR interim efficacy stopping rule is PP>=P_eff
 BEMPR final efficacy stopping rule is P(Delta>Delta_fin)>=P_fin
 }
 \examples{
-#Check versus https://biostatistics.mdanderson.org/shinyapps/BEMPO/
-test1<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,
- P_fut=0.7,Delta_eff=0.3,P_eff=0.9,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-test2<-BEMPP(N=15,p=0.5, design="BEMPO", interim_type="fix",interim=c(5,10),Delta_fut=0.3,
- P_fut=1  ,Delta_eff=0.3,P_eff=1  ,Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
-test3<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0.3,
- P_eff=0.9,Delta_fin=0.3,P_fin=0.7,Beta_dis=c(0.5,0.5),nsim=10)
-test4<-BEMPP(N=15,p=0.5, design="BEMPR", interim_type="fix",interim=c(5,10),P_fut=0,P_eff=1,
- Delta_fin=0.3,P_fin=0.8,Beta_dis=c(0.5,0.5),nsim=10)
+\donttest{
+pow<-BM_R(N=c(100),ar=1,p_exp=c(0.475),p_ctrl=c(0.35),interim=c(0.3,0.5,0.75),Delta_fut=NULL,
+P_fut=c(0.25,0.5,0.5),Delta_eff=c(0,0,0),P_eff=c(1,0.75,0.75),Delta_fin=0,P_fin=0.75, 
+distrisize=10^3, PP_nsim=10^3, design_fut="futPR", design_eff="effPO",nsim=1000)
+typeI<-BM_R(N=c(100),ar=1,p_exp=c(0.475),p_ctrl=c(0.475),interim=c(0.3,0.5,0.75),Delta_fut=NULL,
+P_fut=c(0.25,0.5,0.5),Delta_eff=c(0,0,0),P_eff=c(1,0.75,0.75),Delta_fin=0,P_fin=0.75, 
+distrisize=10^3, PP_nsim=10^3, design_fut="futPR", design_eff="effPO",nsim=1000)
+}
 }
 \references{
 Lee JJ, Liu DD.A predictive probability design for phase II cancer clinical trialsClinical Trials 2008; 5: 93–106
